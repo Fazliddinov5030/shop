@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}{{ book.title }} - BookHub{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">{{ t.book_breadcrumb_home }}</a></li>
+        <li class="breadcrumb-item"><a href="?category={{ book.category.slug }}">{{ book.category.name }}</a></li>
+        <li class="breadcrumb-item active">{{ book.title }}</li>
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <div class="col-md-5">
+        {% if book.cover %}
+            <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="img-fluid rounded shadow-sm">
+        {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center rounded shadow-sm" style="height: 400px;">
+                <i class="bi bi-book" style="font-size: 5rem; color: #ccc;"></i>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-7">
+        <h1 class="mb-3">{{ book.title }}</h1>
+        
+        <div class="mb-3">
+            <p class="text-muted mb-1">{{ t.book_author }}</p>
+            <p class="fs-5">{{ book.author }}</p>
+        </div>
+
+        <div class="mb-3">
+            <p class="text-muted mb-1">{{ t.book_section }}</p>
+            <p class="fs-5">
+                <a href="?category={{ book.category.slug }}" class="badge bg-info">{{ book.category.name }}</a>
+            </p>
+        </div>
+
+        <div class="mb-4">
+            <p class="text-muted mb-1">{{ t.book_price }}</p>
+            <p class="display-4 text-success fw-bold">{{ book.price }} UZS</p>
+        </div>
+
+        <div class="mb-4">
+            <p class="text-muted mb-1">{{ t.book_stock }}</p>
+            {% if book.stock > 0 %}
+                <span class="badge bg-success fs-6">{{ t.book_in_stock }} ({{ book.stock }} ta)</span>
+            {% else %}
+                <span class="badge bg-danger fs-6">{{ t.book_out_of_stock }}</span>
+            {% endif %}
+        </div>
+
+        <div class="mb-4">
+            <p class="text-muted mb-1">{{ t.book_description }}</p>
+            <p class="lead">{{ book.description|linebreaks }}</p>
+        </div>
+
+        {% if book.stock > 0 %}
+            <form action="{% url 'add_to_cart' book.id %}" method="post" class="mb-3 ajax-add-form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    <i class="bi bi-cart-plus"></i> {{ t.book_add_to_cart }}
+                </button>
+            </form>
+        {% else %}
+            <button class="btn btn-secondary btn-lg w-100" disabled>
+                {{ t.book_sold_out }}
+            </button>
+        {% endif %}
+
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg w-100">
+            <i class="bi bi-arrow-left"></i> {{ t.book_back }}
+        </a>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <h3 class="mb-4">{{ t.book_related }}</h3>
+        <div class="row g-3">
+            {% for related_book in book.category.books.all|dictsort:"title" %}
+                {% if related_book.id != book.id %}
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 shadow-sm">
+                            {% if related_book.cover %}
+                                <img src="{{ related_book.cover.url }}" alt="{{ related_book.title }}" class="card-img-top" style="height: 150px; object-fit: cover;">
+                            {% else %}
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                                    <i class="bi bi-book" style="font-size: 2rem; color: #ccc;"></i>
+                                </div>
+                            {% endif %}
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title">{{ related_book.title }}</h6>
+                                <p class="card-text text-success fw-bold mt-auto">{{ related_book.price }} UZS</p>
+                                <a href="{% url 'book_detail' related_book.slug %}" class="btn btn-sm btn-outline-primary">
+                                    {{ t.book_view }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

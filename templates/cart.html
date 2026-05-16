@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ t.cart_title }}</h1>
+{% if items %}
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>{{ t.cart_book }}</th>
+                <th>{{ t.cart_quantity }}</th>
+                <th>{{ t.cart_price }}</th>
+                <th>{{ t.cart_total }}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <td><a href="{{ item.book.get_absolute_url }}">{{ item.book.title }}</a></td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.book.price }} UZS</td>
+                    <td>{{ item.cost }} UZS</td>
+                    <td><a class="button button-secondary" href="{% url 'remove_from_cart' item.book.id %}">{{ t.cart_remove }}</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="cart-summary">
+        <p>{{ t.cart_total }}: <strong>{{ total }} UZS</strong></p>
+        <a class="button" href="{% url 'checkout' %}">{{ t.cart_checkout }}</a>
+    </div>
+{% else %}
+    <div class="empty-state text-center py-5">
+        <div class="mb-3" style="font-size: 3rem; color: #6b7280;"><i class="bi bi-cart-x"></i></div>
+        <h2>{{ t.cart_empty_title }}</h2>
+        <p class="text-muted mb-4">{{ t.cart_empty_text }}</p>
+        <a class="btn btn-primary" href="{% url 'home' %}">{{ t.cart_empty_action }}</a>
+    </div>
+{% endif %}
+{% endblock %}

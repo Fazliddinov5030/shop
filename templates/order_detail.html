@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ t.order_history_title }} #{{ order.id }}</h1>
+<p>{{ t.order_detail_status }}: {{ order.get_status_display }}</p>
+<p>{{ t.order_detail_time }}: {{ order.created_at|date:'Y-m-d H:i' }}</p>
+<table class="order-table">
+    <thead>
+        <tr>
+            <th>{{ t.checkout_book }}</th>
+            <th>{{ t.order_detail_quantity }}</th>
+            <th>{{ t.order_detail_unit_price }}</th>
+            <th>{{ t.order_detail_sum }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order.items.all %}
+            <tr>
+                <td>{{ item.book.title }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price }} UZS</td>
+                <td>{{ item.total_cost }} UZS</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<p class="cart-summary">{{ t.order_detail_summary }}: <strong>{{ order.total_price }} UZS</strong></p>
+{% endblock %}

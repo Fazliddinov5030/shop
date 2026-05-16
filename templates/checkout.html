@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ t.checkout_title }}</h1>
+{% if items %}
+    <table class="checkout-table">
+        <thead>
+            <tr>
+                <th>{{ t.checkout_book }}</th>
+                <th>{{ t.checkout_quantity }}</th>
+                <th>{{ t.checkout_unit_price }}</th>
+                <th>{{ t.checkout_total }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book, quantity, cost in items %}
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ quantity }}</td>
+                    <td>{{ book.price }} UZS</td>
+                    <td>{{ cost }} UZS</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="cart-summary">
+        <p>{{ t.checkout_total }}: <strong>{{ total }} UZS</strong></p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="button">{{ t.checkout_finish }}</button>
+        </form>
+    </div>
+{% else %}
+    <p>{{ t.checkout_empty }}</p>
+{% endif %}
+{% endblock %}

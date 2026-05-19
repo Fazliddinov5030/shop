@@ -1,42 +1,57 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+{% endblock %}
+
 {% block content %}
+
 <div class="text-center mb-4">
     <div class="register-icon-wrapper mx-auto mb-3">
         <i class="bi bi-person-plus-fill"></i>
     </div>
     <h1 class="text-center">{{ t.register_title }}</h1>
 </div>
+
 <div class="row">
     <div class="col-12 col-md-8 col-lg-5 mx-auto">
-        <div class="card form-card form-card-centered p-3">
+        <div class="card form-card form-card-centered p-4">
             <form method="post">
                 {% csrf_token %}
-                {% for field in form %}
-                    <div class="mb-3">
-                        {{ field.label_tag }}
-                        {% if field.name == 'birth_date' %}
-                            <div class="date-field-wrapper">
-                                {{ field }}
-                                <span class="date-field-icon"><i class="bi bi-calendar3"></i></span>
-                            </div>
-                        {% else %}
-                            {{ field }}
-                        {% endif %}
-                        {% if field.help_text %}
-                            <div class="form-text text-muted small">{{ field.help_text }}</div>
-                        {% endif %}
-                        {% for error in field.errors %}
-                            <div class="text-danger small mt-1">{{ error }}</div>
-                        {% endfor %}
-                    </div>
 
+                {% for field in form %}
+                <div class="input-box">
+                    {% if field.name == 'birth_date' %}
+                        <div class="date-field-wrapper">
+                            {{ field }}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            <span class="date-field-icon"><i class="bi bi-calendar3"></i></span>
+                        </div>
+                    {% else %}
+                        {{ field }}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                    <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+
+                    {% if field.help_text %}
+                    <div class="help-text">{{ field.help_text }}</div>
+                    {% endif %}
+                </div>
                 {% endfor %}
+
                 <button type="submit" class="btn btn-primary w-100 py-2">{{ t.register_button }}</button>
             </form>
         </div>
     </div>
 </div>
 
-<p class="mt-3 text-center">{{ t.register_have_account }} <a href="{% url 'login' %}">{{ t.register_login_link }}</a></p>
+<p class="mt-3 text-center">
+    {{ t.register_have_account }}
+    <a href="{% url 'login' %}">{{ t.register_login_link }}</a>
+</p>
 
 {% endblock %}

@@ -9,11 +9,11 @@ class CustomUserCreationForm(UserCreationForm):
         model = CustomUser
         fields = [
             'username',
-            'email',
             'first_name',
             'last_name',
             'phone_number',
             'adress',
+            'email',
             'birth_date',
         ]
         widgets = {

@@ -1,39 +1,103 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>{{ t.cart_title }}</h1>
-{% if items %}
-    <table class="cart-table">
-        <thead>
-            <tr>
-                <th>{{ t.cart_book }}</th>
-                <th>{{ t.cart_quantity }}</th>
-                <th>{{ t.cart_price }}</th>
-                <th>{{ t.cart_total }}</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-                <tr>
-                    <td><a href="{{ item.book.get_absolute_url }}">{{ item.book.title }}</a></td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.book.price }} UZS</td>
-                    <td>{{ item.cost }} UZS</td>
-                    <td><a class="button button-secondary" href="{% url 'remove_from_cart' item.book.id %}">{{ t.cart_remove }}</a></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div class="cart-summary">
-        <p>{{ t.cart_total }}: <strong>{{ total }} UZS</strong></p>
-        <a class="button" href="{% url 'checkout' %}">{{ t.cart_checkout }}</a>
+
+<div class="cart-wrapper">
+    <h1 class="cart-page-title">🛒 {{ t.cart_title }}</h1>
+
+    {% if items %}
+    <div class="cart-layout">
+
+        <!-- LEFT: TABLE -->
+        <div class="cart-table-card">
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>{{ t.cart_book }}</th>
+                        <th>{{ t.cart_quantity }}</th>
+                        <th>{{ t.cart_price }}</th>
+                        <th>{{ t.cart_total }}</th>
+                        <th>Amal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td data-label="{{ t.cart_book }}">
+                            <div class="book-info">
+                                <div class="book-icon">
+                                    <i class="bi bi-book"></i>
+                                </div>
+                                <div>
+                                    <a href="{{ item.book.get_absolute_url }}" class="book-title">
+                                        {{ item.book.title }}
+                                    </a>
+                                    <p class="book-author">{{ item.book.author }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td data-label="{{ t.cart_quantity }}">
+                            <span class="qty-badge">{{ item.quantity }}</span>
+                        </td>
+                        <td data-label="{{ t.cart_price }}">
+                            <span class="price-text">{{ item.book.price }} UZS</span>
+                        </td>
+                        <td data-label="{{ t.cart_total }}">
+                            <span class="total-text">{{ item.cost }} UZS</span>
+                        </td>
+                        <td data-label="Amal">
+                            <a href="{% url 'remove_from_cart' item.book.id %}" class="delete-btn">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- RIGHT: SUMMARY -->
+        <div class="cart-summary-card">
+            <h2 class="summary-title">Savat xulosasi</h2>
+            <hr class="summary-divider">
+
+            <div class="summary-row">
+                <span class="summary-label">Jami summa:</span>
+                <div class="summary-amount">
+                    <span class="summary-price">{{ total }}</span>
+                    <span class="summary-currency">UZS</span>
+                </div>
+            </div>
+
+            <a href="{% url 'checkout' %}" class="checkout-btn">
+                {{ t.cart_checkout }} →
+            </a>
+
+            <a href="{% url 'home' %}" class="continue-btn">
+                Xaridni davom ettirish
+            </a>
+        </div>
+
     </div>
-{% else %}
-    <div class="empty-state text-center py-5">
-        <div class="mb-3" style="font-size: 3rem; color: #6b7280;"><i class="bi bi-cart-x"></i></div>
-        <h2>{{ t.cart_empty_title }}</h2>
-        <p class="text-muted mb-4">{{ t.cart_empty_text }}</p>
-        <a class="btn btn-primary" href="{% url 'home' %}">{{ t.cart_empty_action }}</a>
+
+    {% else %}
+
+    <!-- EMPTY -->
+    <div class="cart-empty-card">
+        <i class="bi bi-cart-x empty-icon"></i>
+        <h2 class="empty-title">{{ t.cart_empty_title }}</h2>
+        <p class="empty-text">{{ t.cart_empty_text }}</p>
+        <a href="{% url 'home' %}" class="checkout-btn empty-action-btn">
+            <i class="bi bi-arrow-left"></i> {{ t.cart_empty_action }}
+        </a>
     </div>
-{% endif %}
+
+    {% endif %}
+</div>
+
 {% endblock %}

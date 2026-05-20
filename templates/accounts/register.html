@@ -7,17 +7,20 @@
 
 {% block content %}
 
-<div class="text-center mb-4">
-    <div class="register-icon-wrapper mx-auto mb-3">
-        <i class="bi bi-person-plus-fill"></i>
-    </div>
-    <h1 class="text-center">{{ t.register_title }}</h1>
-</div>
+<div class="password-container">
+    <div class="password-wrapper">
+        <!-- Header -->
+        <div class="auth-header">
+            <div class="auth-icon">
+                <i class="bi bi-person-plus-fill"></i>
+            </div>
+            <h1 class="auth-title">Ro'yxatdan o'tish</h1>
+            <p class="auth-subtitle">Yangi akkaunt yaratish</p>
+        </div>
 
-<div class="row">
-    <div class="col-12 col-md-8 col-lg-5 mx-auto">
-        <div class="card form-card form-card-centered p-4">
-            <form method="post">
+        <!-- Form Card -->
+        <div class="auth-card">
+            <form method="post" class="auth-form">
                 {% csrf_token %}
 
                 {% for field in form %}
@@ -43,15 +46,56 @@
                 </div>
                 {% endfor %}
 
-                <button type="submit" class="btn btn-primary w-100 py-2">{{ t.register_button }}</button>
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    <i class="bi bi-person-plus"></i>
+                    Ro'yxatdan o'tish
+                </button>
             </form>
         </div>
     </div>
 </div>
 
-<p class="mt-3 text-center">
-    {{ t.register_have_account }}
-    <a href="{% url 'login' %}">{{ t.register_login_link }}</a>
+<p class="mt-3 text-center" style="color: var(--text-secondary); font-size: 0.9rem;">
+    Allaqachon ro'yxatdan o'tganmisiz?
+    <a href="{% url 'login' %}" style="color: var(--primary); font-weight: 600; text-decoration: none;">Kirish</a>
 </p>
+
+<script>
+// Floating label handler for input-box inputs (register form)
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('.input-box input, .input-box select');
+    
+    // Function to update label position based on input value
+    function updateLabelPosition(input) {
+        if (input.value.trim() !== '') {
+            input.classList.add('has-value');
+        } else {
+            input.classList.remove('has-value');
+        }
+    }
+    
+    // Check initial state for all inputs (for pre-filled forms)
+    inputs.forEach(input => {
+        updateLabelPosition(input);
+        
+        // Add event listeners for changes
+        input.addEventListener('input', function() {
+            updateLabelPosition(this);
+        });
+        
+        input.addEventListener('change', function() {
+            updateLabelPosition(this);
+        });
+        
+        input.addEventListener('focus', function() {
+            updateLabelPosition(this);
+        });
+        
+        input.addEventListener('blur', function() {
+            updateLabelPosition(this);
+        });
+    });
+});
+</script>
 
 {% endblock %}

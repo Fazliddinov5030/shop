@@ -184,27 +184,50 @@
 .form-group {
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .form-label {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
     font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
+    color: var(--text-muted);
     font-size: 0.95rem;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.2, 1);
+    background-color: var(--surface);
+    padding: 0 5px;
 }
 
 .form-control {
-    padding: 0.75rem 1rem;
+    padding: 12px 12px;
     border: 1px solid var(--border);
     border-radius: 10px;
     font-size: 1rem;
     transition: all 0.2s ease;
+    background-color: var(--surface);
 }
 
 .form-control:focus {
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.05);
+}
+
+.form-control:focus + .form-label,
+.form-control:not(:placeholder-shown) + .form-label,
+.form-control.has-value + .form-label {
+    top: -10px;
+    font-size: 0.8rem;
+    color: var(--primary);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
 }
 
 /* Avatar Upload */
@@ -331,16 +354,20 @@
 /* Auth Pages */
 .password-container {
     min-height: calc(100vh - 200px);
-    background: linear-gradient(135deg, var(--bg) 0%, #f3f4f6 100%);
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 2rem 1rem;
+    position: relative;
+    overflow: hidden;
 }
 
 .password-wrapper {
     width: 100%;
     max-width: 450px;
+    position: relative;
+    z-index: 1;
 }
 
 .auth-header {
@@ -352,20 +379,29 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05));
     border-radius: 50%;
-    font-size: 2rem;
+    font-size: 2.5rem;
     color: var(--primary);
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(99, 102, 241, 0.2);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
 }
 
 .auth-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
+    text-shadow: none;
 }
 
 .auth-subtitle {
@@ -375,11 +411,24 @@
 }
 
 .auth-card {
-    background: var(--surface);
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .auth-form {
@@ -431,6 +480,36 @@
 
 .auth-link:hover {
     color: var(--primary);
+}
+
+/* Register Link - Beautiful Styling */
+.register-link {
+    position: relative;
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.2, 1);
+    padding: 0.25rem 0.5rem;
+}
+
+.register-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--primary-600));
+    transition: width 0.3s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+.register-link:hover {
+    color: var(--primary-600);
+}
+
+.register-link:hover::after {
+    width: 100%;
 }
 
 /* Success Card */

@@ -681,7 +681,7 @@ a:hover {
 }
     font-size: 28px;
     color: white;
-}
+
 
 .form-card {
     background-color: #ffffff;
@@ -834,8 +834,10 @@ a:hover {
 
 .input-box input:focus + label,
 .input-box input:valid + label,
+.input-box input.has-value + label,
 .input-box select:focus + label,
-.input-box select:valid + label {
+.input-box select:valid + label,
+.input-box select.has-value + label {
     top: -10px;
     font-size: 12px;
     color: #6366f1;

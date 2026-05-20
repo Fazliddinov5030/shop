@@ -75,15 +75,15 @@
                     <!-- Full Name -->
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label">Ism</label>
-                            {{ form.first_name }}
+                            <input type="text" id="{{ form.first_name.id_for_label }}" name="first_name" value="{{ form.first_name.value|default:'' }}" class="form-control" placeholder=" ">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">Ism</label>
                             {% if form.first_name.errors %}
                                 <small class="form-error">{{ form.first_name.errors }}</small>
                             {% endif %}
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Familiya</label>
-                            {{ form.last_name }}
+                            <input type="text" id="{{ form.last_name.id_for_label }}" name="last_name" value="{{ form.last_name.value|default:'' }}" class="form-control" placeholder=" ">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">Familiya</label>
                             {% if form.last_name.errors %}
                                 <small class="form-error">{{ form.last_name.errors }}</small>
                             {% endif %}
@@ -93,15 +93,15 @@
                     <!-- Email and Phone -->
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label">Email</label>
-                            {{ form.email }}
+                            <input type="email" id="{{ form.email.id_for_label }}" name="email" value="{{ form.email.value|default:'' }}" class="form-control" placeholder=" ">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
                             {% if form.email.errors %}
                                 <small class="form-error">{{ form.email.errors }}</small>
                             {% endif %}
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Telefon raqami</label>
-                            {{ form.phone_number }}
+                            <input type="tel" id="{{ form.phone_number.id_for_label }}" name="phone_number" value="{{ form.phone_number.value|default:'' }}" class="form-control" placeholder=" ">
+                            <label for="{{ form.phone_number.id_for_label }}" class="form-label">Telefon raqami</label>
                             {% if form.phone_number.errors %}
                                 <small class="form-error">{{ form.phone_number.errors }}</small>
                             {% endif %}
@@ -111,15 +111,15 @@
                     <!-- Address and Birth Date -->
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label">Manzil</label>
-                            {{ form.address }}
+                            <textarea id="{{ form.address.id_for_label }}" name="address" class="form-control" placeholder=" ">{{ form.address.value|default:'' }}</textarea>
+                            <label for="{{ form.address.id_for_label }}" class="form-label">Manzil</label>
                             {% if form.address.errors %}
                                 <small class="form-error">{{ form.address.errors }}</small>
                             {% endif %}
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Tug'ilgan sana</label>
-                            {{ form.birth_date }}
+                            <input type="date" id="{{ form.birth_date.id_for_label }}" name="birth_date" value="{{ form.birth_date.value|date:'Y-m-d'|default:'' }}" class="form-control" placeholder=" ">
+                            <label for="{{ form.birth_date.id_for_label }}" class="form-label">Tug'ilgan sana</label>
                             {% if form.birth_date.errors %}
                                 <small class="form-error">{{ form.birth_date.errors }}</small>
                             {% endif %}
@@ -139,5 +139,39 @@
         </div>
     </div>
 </div>
+
+<script>
+// Floating label handler for form inputs
+document.addEventListener('DOMContentLoaded', function() {
+    const formControls = document.querySelectorAll('.form-control');
+    
+    // Function to update label position based on input value
+    function updateLabelPosition(input) {
+        if (input.value.trim() !== '') {
+            input.classList.add('has-value');
+        } else {
+            input.classList.remove('has-value');
+        }
+    }
+    
+    // Check initial state for all inputs (for pre-filled forms)
+    formControls.forEach(input => {
+        updateLabelPosition(input);
+        
+        // Add event listeners for changes
+        input.addEventListener('input', function() {
+            updateLabelPosition(this);
+        });
+        
+        input.addEventListener('focus', function() {
+            updateLabelPosition(this);
+        });
+        
+        input.addEventListener('blur', function() {
+            updateLabelPosition(this);
+        });
+    });
+});
+</script>
 
 {% endblock %}

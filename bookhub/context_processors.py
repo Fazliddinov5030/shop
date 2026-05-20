@@ -1,3 +1,4 @@
+
 def language_context(request):
     supported = {
         'uz': {
@@ -234,3 +235,11 @@ def language_context(request):
         'current_language': data['current_language'],
         'language_menu': data['language_menu'],
     }
+
+def cart_count(request):
+    cart = request.session.get('cart', {})
+    try:
+        count = sum(int(v) for v in cart.values())
+    except (ValueError, TypeError):
+        count = 0
+    return {'cart_count': count}

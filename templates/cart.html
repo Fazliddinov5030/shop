@@ -42,7 +42,17 @@
                             </div>
                         </td>
                         <td data-label="{{ t.cart_quantity }}">
-                            <span class="qty-badge">{{ item.quantity }}</span>
+                            <div class="qty-controls">
+                                <a href="{% url 'decrease_quantity' item.book.id %}" class="qty-btn qty-minus"
+                                    title="Kamaytirilish">
+                                    <i class="bi bi-dash"></i>
+                                </a>
+                                <span class="qty-value">{{ item.quantity }}</span>
+                                <a href="{% url 'increase_quantity' item.book.id %}" class="qty-btn qty-plus"
+                                    title="Ko'paytirilish">
+                                    <i class="bi bi-plus"></i>
+                                </a>
+                            </div>
                         </td>
                         <td data-label="{{ t.cart_price }}">
                             <span class="price-text">{{ item.book.price }} UZS</span>
@@ -51,9 +61,12 @@
                             <span class="total-text">{{ item.cost }} UZS</span>
                         </td>
                         <td data-label="Amal">
-                            <a href="{% url 'remove_from_cart' item.book.id %}" class="delete-btn">
-                                <i class="bi bi-trash"></i>
-                            </a>
+                            <form method="post" action="{% url 'remove_from_cart' item.book.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="delete-btn" title="Savatdan o'chirish">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}

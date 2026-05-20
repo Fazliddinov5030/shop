@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 from .models import Book, Category
 
@@ -71,10 +72,42 @@ def add_to_cart(request, book_id):
     return redirect('cart_detail')
 
 
+
+
+@require_POST
 def remove_from_cart(request, book_id):
     cart = _get_cart(request)
     if str(book_id) in cart:
         cart.pop(str(book_id))
         _save_cart(request, cart)
-        messages.success(request, 'Mahsulot savatdan o‘chirildi.')
+        messages.success(request, 'Mahsulot savatdan o\'chirildi.')
+    return redirect('cart_detail')
+
+@require_POST
+def increase_quantity(request, book_id):
+    book = get_object_or_404(Book, id=book_id, is_active=True)
+    cart = _get_cart(request)
+    if str(book_id) in cart:
+        # Check if increasing would exceed stock
+        if cart[str(book_id)] < book.stock:
+            cart[str(book_id)] += 1
+            _save_cart(request, cart)
+        else:
+            messages.warning(request, f'"{book.title}" uchun yetarli ombor yo\'q.')
+    return redirect('cart_detail')
+
+
+@require_POST
+def decrease_quantity(request, book_id):
+    book = get_object_or_404(Book, id=book_id, is_active=True)
+    cart = _get_cart(request)
+    if str(book_id) in cart:
+        if cart[str(book_id)] > 1:
+            cart[str(book_id)] -= 1
+            _save_cart(request, cart)
+        else:
+            # If quantity would be 0, remove from cart
+            cart.pop(str(book_id))
+            _save_cart(request, cart)
+            messages.success(request, 'Mahsulot savatdan o\'chirildi.')
     return redirect('cart_detail')

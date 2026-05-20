@@ -1,5 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.db.models import F
 from django.shortcuts import get_object_or_404, redirect, render
 
 from store.models import Book
@@ -11,35 +13,52 @@ def _get_cart(request):
 
 
 @login_required
+@transaction.atomic
 def checkout(request):
     cart = _get_cart(request)
     if not cart:
-        messages.warning(request, 'Savat bo‘sh. Avvalo kitob qo‘shing.')
+        messages.warning(request, "Savat bo'sh. Avvalo kitob qo'shing.")
         return redirect('home')
 
-    items = []
-    total = 0
-    for book_id, quantity in cart.items():
-        book = get_object_or_404(Book, id=book_id)
-        cost = book.price * quantity
-        total += cost
-        items.append((book, quantity, cost))
+    # Barcha kitoblarni BITTA SQL bilan olish (N+1 hal qilindi)
+    book_ids = list(cart.keys())
+    books = Book.objects.select_for_update().filter(id__in=book_ids)
+    books_dict = {str(b.id): b for b in books}
 
     if request.method == 'POST':
-        for book, quantity, cost in items:
-            if book.stock < quantity:
-                messages.warning(request, f'Kitob "{book.title}" yetarli omborda yo‘q. Iltimos, savatni tekshiring.')
+        # Stock tekshiruv — lock ostida (race condition hal qilindi)
+        for book_id, quantity in cart.items():
+            book = books_dict.get(book_id)
+            if not book or book.stock < quantity:
+                messages.warning(request, f'Kitob "{book.title}" yetarli omborda yo\'q.')
                 return redirect('cart_detail')
 
         order = Order.objects.create(user=request.user)
-        for book, quantity, cost in items:
-            OrderItem.objects.create(order=order, book=book, quantity=quantity, price=book.price)
-            book.stock -= quantity
-            book.save()
+        for book_id, quantity in cart.items():
+            book = books_dict[book_id]
+            OrderItem.objects.create(
+                order=order,
+                book=book,
+                quantity=quantity,
+                price=book.price
+            )
+            # F() — atomik minus, race condition yo'q
+            Book.objects.filter(id=book.id).update(stock=F('stock') - quantity)
 
         request.session['cart'] = {}
         messages.success(request, 'Buyurtmangiz qabul qilindi. Rahmat!')
         return redirect('checkout_success')
+
+    # GET — sahifani ko'rsatish uchun items ro'yxat yasaymiz
+    items = []
+    total = 0
+    for book_id, quantity in cart.items():
+        book = books_dict.get(book_id)
+        if not book:
+            continue
+        cost = book.price * quantity
+        total += cost
+        items.append((book, quantity, cost))
 
     return render(request, 'checkout.html', {'items': items, 'total': total})
 

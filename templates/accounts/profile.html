@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profil - BookHub{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-wrapper">
+        <!-- Header Section -->
+        <div class="profile-header">
+            <h1 class="profile-title">Mening Profilim</h1>
+            <p class="profile-subtitle">Shaxsiy ma'lumotlarni boshqarish</p>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="profile-layout">
+            <!-- Left: Avatar Section -->
+            <div class="profile-avatar-section">
+                <div class="avatar-card">
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.get_full_name }}" class="avatar-image">
+                    {% else %}
+                        <div class="avatar-placeholder">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                    {% endif %}
+                    <div class="avatar-info">
+                        <h2 class="user-name">{{ user.get_full_name|default:user.username }}</h2>
+                        <p class="user-username">@{{ user.username }}</p>
+                        <p class="user-email">{{ user.email }}</p>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="profile-links">
+                    <a href="{% url 'password_change' %}" class="profile-link">
+                        <i class="bi bi-key"></i>
+                        <span>Parolni o'zgartirish</span>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                    <a href="{% url 'order_history' %}" class="profile-link">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Buyurtmalar tarixchasi</span>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                    <a href="{% url 'logout' %}" class="profile-link danger">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Chiqish</span>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right: Form Section -->
+            <div class="profile-form-section">
+                <form method="post" enctype="multipart/form-data" class="profile-form">
+                    {% csrf_token %}
+
+                    <!-- Avatar Upload -->
+                    <div class="form-group">
+                        <label class="form-label">Avatar</label>
+                        <div class="avatar-upload">
+                            <input type="file" name="avatar" id="avatar" accept="image/*" class="avatar-input">
+                            <label for="avatar" class="avatar-upload-label">
+                                <i class="bi bi-cloud-arrow-up"></i>
+                                <span>Rasmni tanlang</span>
+                                <small>PNG, JPG hangama 5MB</small>
+                            </label>
+                        </div>
+                        {% if form.avatar.errors %}
+                            <small class="form-error">{{ form.avatar.errors }}</small>
+                        {% endif %}
+                    </div>
+
+                    <!-- Full Name -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Ism</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <small class="form-error">{{ form.first_name.errors }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Familiya</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <small class="form-error">{{ form.last_name.errors }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Email and Phone -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <small class="form-error">{{ form.email.errors }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telefon raqami</label>
+                            {{ form.phone_number }}
+                            {% if form.phone_number.errors %}
+                                <small class="form-error">{{ form.phone_number.errors }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Address and Birth Date -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Manzil</label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                                <small class="form-error">{{ form.address.errors }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tug'ilgan sana</label>
+                            {{ form.birth_date }}
+                            {% if form.birth_date.errors %}
+                                <small class="form-error">{{ form.birth_date.errors }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-save">
+                            <i class="bi bi-check-circle"></i>
+                            O'zgarishlarni saqlash
+                        </button>
+                        <a href="{% url 'home' %}" class="btn btn-secondary">Bekor qilish</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

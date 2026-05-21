@@ -6,11 +6,117 @@
 {% block content %}
 <div class="profile-container">
     <div class="profile-wrapper">
-        <!-- Header Section -->
+        <!-- Header Section with Small Avatar -->
         <div class="profile-header">
-            <h1 class="profile-title">Mening Profilim</h1>
-            <p class="profile-subtitle">Shaxsiy ma'lumotlarni boshqarish</p>
+            <div class="profile-header-top">
+                <div>
+                    <h1 class="profile-title">Mening Profilim</h1>
+                    <p class="profile-subtitle">Shaxsiy ma'lumotlarni boshqarish</p>
+                </div>
+                <!-- Small Avatar in Top Right -->
+                <div class="profile-header-avatar">
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.get_full_name }}" class="header-avatar-image">
+                    {% else %}
+                        <div class="header-avatar-placeholder">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
+
+        <!-- Stats Cards Section -->
+        <div class="profile-stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon books">
+                    <i class="bi bi-book"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Sotib olgan kitoblar</p>
+                    <h3 class="stat-value">{{ unique_books_count }}</h3>
+                    <small class="stat-subtext">{{ total_books_count }} dona</small>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon spent">
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Sarflagan pul</p>
+                    <h3 class="stat-value">{{ total_spent|floatformat:0 }}</h3>
+                    <small class="stat-subtext">So'mga</small>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon member">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Azo bo'lgan vaqti</p>
+                    <h3 class="stat-value">{{ member_since|date:"y" }} yil</h3>
+                    <small class="stat-subtext">{{ member_since|date:"M d, Y" }}</small>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orders">
+                    <i class="bi bi-bag-check"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Buyurtmalar</p>
+                    <h3 class="stat-value">{{ bought_books|length }}</h3>
+                    <small class="stat-subtext">Barcha vaqtning</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recently Bought Books Section -->
+        {% if bought_books %}
+        <div class="profile-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="bi bi-bookmark-heart"></i>
+                    So'nggi sotib olgan kitoblar
+                </h2>
+                <a href="{% url 'order_history' %}" class="view-all-link">Barchasi ko'rish</a>
+            </div>
+            
+            <div class="books-grid">
+                {% for item in bought_books %}
+                <div class="book-card-mini">
+                    {% if item.book.cover %}
+                        <div class="book-cover-container">
+                            <img src="{{ item.book.cover.url }}" alt="{{ item.book.title }}" class="book-cover-mini">
+                        </div>
+                    {% else %}
+                        <div class="book-cover-placeholder">
+                            <i class="bi bi-book"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="book-info-mini">
+                        <h4 class="book-title-mini">{{ item.book.title }}</h4>
+                        <p class="book-author-mini">{{ item.book.author }}</p>
+                        
+                        <div class="book-footer-mini">
+                            <span class="book-price-mini">{{ item.price|floatformat:0 }} so'm</span>
+                            {% if item.quantity > 1 %}
+                                <span class="book-quantity-mini">x{{ item.quantity }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="book-date-mini">
+                            <small><i class="bi bi-calendar"></i> {{ item.order_date|date:"M d, Y" }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
         <!-- Profile Content -->
         <div class="profile-layout">
@@ -175,3 +281,79 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 {% endblock %}
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="{{ form.phone_number.id_for_label }}" name="phone_number" value="{{ form.phone_number.value|default:'' }}" class="form-control" placeholder=" ">
+                            <label for="{{ form.phone_number.id_for_label }}" class="form-label">Telefon raqami</label>
+                            {% if form.phone_number.errors %}
+                                <small class="form-error">{{ form.phone_number.errors }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Address and Birth Date -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <textarea id="{{ form.address.id_for_label }}" name="address" class="form-control" placeholder=" ">{{ form.address.value|default:'' }}</textarea>
+                            <label for="{{ form.address.id_for_label }}" class="form-label">Manzil</label>
+                            {% if form.address.errors %}
+                                <small class="form-error">{{ form.address.errors }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <input type="date" id="{{ form.birth_date.id_for_label }}" name="birth_date" value="{{ form.birth_date.value|date:'Y-m-d'|default:'' }}" class="form-control" placeholder=" ">
+                            <label for="{{ form.birth_date.id_for_label }}" class="form-label">Tug'ilgan sana</label>
+                            {% if form.birth_date.errors %}
+                                <small class="form-error">{{ form.birth_date.errors }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-save">
+                            <i class="bi bi-check-circle"></i>
+                            O'zgarishlarni saqlash
+                        </button>
+                        <a href="{% url 'home' %}" class="btn btn-secondary">Bekor qilish</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Floating label handler for form inputs
+document.addEventListener('DOMContentLoaded', function() {
+    const formControls = document.querySelectorAll('.form-control');
+    
+    // Function to update label position based on input value
+    function updateLabelPosition(input) {
+        if (input.value.trim() !== '') {
+            input.classList.add('has-value');
+        } else {
+            input.classList.remove('has-value');
+        }
+    }
+    
+    // Check initial state for all inputs (for pre-filled forms)
+    formControls.forEach(input => {
+        updateLabelPosition(input);
+        
+        // Add event listeners for changes
+        input.addEventListener('input', function() {
+            updateLabelPosition(this);
+        });
+        
+        input.addEventListener('focus', function() {
+            updateLabelPosition(this);
+        });
+        
+        input.addEventListener('blur', function() {
+            updateLabelPosition(this);
+        });
+    });
+});
+</script>
+

@@ -1,8 +1,11 @@
+import django
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-
+from httpx import request
+from django.db.models import Q
+from django.core.paginator import Paginator
 from .models import Book, Category
 
 
@@ -19,21 +22,23 @@ def home(request):
     category_slug = request.GET.get('category')
     query = request.GET.get('q', '')
     categories = Category.objects.all()
-    books = Book.objects.filter(is_active=True)
+    books = Book.objects.filter(is_active=True).select_related('category')
 
     if category_slug:
         books = books.filter(category__slug=category_slug)
 
     if query:
-        books = books.filter(title__icontains=query) | books.filter(author__icontains=query)
+        books = books.filter(Q(title__icontains=query) | Q(author__icontains=query)).distinct()
+
+    paginator = Paginator(books, 12)
+    page_obj = paginator.get_page(request.GET.get('page', 1))
 
     return render(request, 'home.html', {
-        'books': books,
+        'books': page_obj,
         'categories': categories,
         'selected_category': category_slug,
         'query': query,
     })
-
 
 def book_detail(request, slug):
     book = get_object_or_404(Book, slug=slug, is_active=True)
@@ -42,10 +47,18 @@ def book_detail(request, slug):
 
 def cart_detail(request):
     cart = _get_cart(request)
+    if not cart:
+        return render(request, 'cart.html', {'items': [], 'total': 0})
+
+    books = Book.objects.filter(id__in=cart.keys())
+    books_dict = {str(b.id): b for b in books}
+
     items = []
     total = 0
     for book_id, quantity in cart.items():
-        book = get_object_or_404(Book, id=book_id)
+        book = books_dict.get(book_id)
+        if not book:
+            continue
         cost = book.price * quantity
         total += cost
         items.append({'book': book, 'quantity': quantity, 'cost': cost})
@@ -56,14 +69,19 @@ def cart_detail(request):
 def add_to_cart(request, book_id):
     book = get_object_or_404(Book, id=book_id, is_active=True)
     cart = _get_cart(request)
-    cart[str(book.id)] = cart.get(str(book.id), 0) + 1
+    current = cart.get(str(book.id), 0) + 1
     _save_cart(request, cart)
-    # Prepare cart count
+    if current +1 >book.stock:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Omborda yetarli emas'})
+        messages.warning(request, f'"{book.title}" omborda yetarli emas.')
+        return redirect('cart_detail')
+    cart[str(book.id)] = current + 1
+    _save_cart(request, cart)
     try:
         total_count = sum(int(v) for v in cart.values())
     except Exception:
         total_count = len(cart)
-
     # If called via AJAX, return JSON so frontend can update without redirect
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'success': True, 'cart_count': total_count, 'book_title': book.title})

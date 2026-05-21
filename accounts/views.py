@@ -31,7 +31,53 @@ def profile(request):
             return redirect('profile')
     else:
         form = UserProfileForm(instance=request.user)
-    return render(request, 'accounts/profile.html', {'form': form})
+    
+    # Get user statistics
+    from django.db.models import Sum, Count, F, DecimalField
+    from django.db.models.functions import Coalesce
+    from orders.models import Order, OrderItem
+    
+    # Get completed orders
+    completed_orders = Order.objects.filter(user=request.user, status='completed')
+    
+    # Calculate total spent using F expressions
+    total_spent_result = OrderItem.objects.filter(
+        order__user=request.user, 
+        order__status='completed'
+    ).aggregate(
+        total=Coalesce(
+            Sum(F('price') * F('quantity'), output_field=DecimalField()),
+            0,
+            output_field=DecimalField()
+        )
+    )
+    total_spent = total_spent_result['total'] or 0
+    
+    # Get bought books with details
+    bought_books = []
+    for order in completed_orders.prefetch_related('items__book').order_by('-created_at'):
+        for item in order.items.all():
+            bought_books.append({
+                'book': item.book,
+                'quantity': item.quantity,
+                'price': item.price,
+                'order_date': order.created_at
+            })
+    
+    # Get unique books count
+    unique_books_count = len(set(item['book'].id for item in bought_books))
+    total_books_count = sum(item['quantity'] for item in bought_books)
+    
+    context = {
+        'form': form,
+        'total_spent': total_spent,
+        'unique_books_count': unique_books_count,
+        'total_books_count': total_books_count,
+        'bought_books': bought_books[:6],  # Show recent 6 books
+        'member_since': request.user.date_joined
+    }
+    
+    return render(request, 'accounts/profile.html', context)
 
 
 class CustomPasswordChangeView(PasswordChangeView):

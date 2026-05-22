@@ -1,0 +1,317 @@
+/* Simple Minimalistic Wishlist */
+
+:root {
+    --red: #ff1744;
+    --dark: #2c3e50;
+    --light: #f5f7fa;
+    --border: #e8ecf1;
+    --text-light: #7f8c8d;
+}
+
+.wishlist-simple {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* Header */
+.wishlist-simple-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 40px;
+    border-bottom: 2px solid var(--red);
+    padding-bottom: 20px;
+}
+
+.wishlist-simple-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--dark);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.wishlist-simple-header i {
+    color: var(--red);
+    font-size: 2.2rem;
+}
+
+.simple-count {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--red);
+    margin-left: auto;
+}
+
+/* Grid */
+.simple-books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+@media (max-width: 768px) {
+    .simple-books-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .simple-books-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}
+
+/* Book Item */
+.simple-book-item {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+}
+
+.simple-book-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(255, 23, 68, 0.15);
+}
+
+/* Cover */
+.simple-cover {
+    position: relative;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    background: var(--light);
+}
+
+.simple-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.simple-book-item:hover .simple-cover img {
+    transform: scale(1.08);
+}
+
+.simple-no-cover {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    color: #aaa;
+    font-size: 2.5rem;
+}
+
+/* Sold Out */
+.simple-sold {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #e74c3c;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Quick Actions */
+.simple-actions {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(44, 62, 80, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.simple-book-item:hover .simple-actions {
+    opacity: 1;
+}
+
+.simple-actions a,
+.simple-actions button {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dark);
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.simple-actions a:hover,
+.simple-actions button:hover {
+    background: var(--red);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Info */
+.simple-info {
+    padding: 12px;
+}
+
+.simple-title {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 4px;
+    text-decoration: none;
+    line-height: 1.3;
+    min-height: 2.6rem;
+    transition: color 0.2s ease;
+}
+
+.simple-title:hover {
+    color: var(--red);
+}
+
+.simple-author {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin: 0 0 8px 0;
+}
+
+.simple-price {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--red);
+    margin: 0 0 10px 0;
+}
+
+.simple-add-btn {
+    width: 100%;
+    padding: 8px;
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.simple-add-btn:hover {
+    background: #d81b60;
+    transform: translateY(-1px);
+}
+
+/* Footer */
+.simple-footer {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.simple-footer a {
+    color: var(--red);
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.simple-footer a:hover {
+    color: var(--dark);
+}
+
+/* Empty State */
+.simple-empty {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.simple-empty i {
+    font-size: 4rem;
+    color: #e8ecf1;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.simple-empty p {
+    font-size: 1.1rem;
+    color: var(--dark);
+    margin-bottom: 20px;
+}
+
+.simple-empty a {
+    display: inline-block;
+    background: var(--red);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.simple-empty a:hover {
+    background: #d81b60;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .wishlist-simple {
+        padding: 30px 16px;
+    }
+
+    .wishlist-simple-header h1 {
+        font-size: 1.6rem;
+    }
+
+    .simple-count {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .wishlist-simple-header {
+        gap: 12px;
+        margin-bottom: 30px;
+    }
+
+    .wishlist-simple-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .wishlist-simple-header i {
+        font-size: 1.8rem;
+    }
+
+    .simple-title {
+        font-size: 0.9rem;
+    }
+
+    .simple-actions a,
+    .simple-actions button {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}

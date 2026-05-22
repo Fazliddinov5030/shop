@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from accounts.models import CustomUser
 
 
 class Category(models.Model):
@@ -38,3 +39,16 @@ class Book(models.Model):
 
     def get_absolute_url(self):
         return reverse('book_detail', kwargs={'slug': self.slug})
+
+
+class Wishlist(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='wishlist')
+    books = models.ManyToManyField(Book, related_name='wishlisted_by', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = 'Wishlists'
+
+    def __str__(self):
+        return f"{self.user.username}'s Wishlist"

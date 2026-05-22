@@ -62,18 +62,25 @@
                         <p class="meta">{{ t.book_author }}: {{ book.author }}</p>
                         <div class="book-card-footer">
                             <span class="price">{{ book.price }} UZS</span>
-                            {% if book.stock > 0 %}
-                                <form action="{% url 'add_to_cart' book.id %}" method="post" class="m-0 ajax-add-form">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn-cart-sm" title="{{ t.book_add_to_cart }}">
-                                        <i class="bi bi-bag-plus"></i>
+                            <div class="book-actions">
+                                {% if user.is_authenticated %}
+                                    <button class="btn-wishlist wishlist-btn" data-book-id="{{ book.id }}" title="Sevimlilar ro'yxatiga qo'shish">
+                                        <i class="bi bi-heart"></i>
                                     </button>
-                                </form>
-                            {% else %}
-                                <button class="btn-cart-sm" disabled title="{{ t.book_sold_out }}">
-                                    <i class="bi bi-x"></i>
-                                </button>
-                            {% endif %}
+                                {% endif %}
+                                {% if book.stock > 0 %}
+                                    <form action="{% url 'add_to_cart' book.id %}" method="post" class="m-0 ajax-add-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-cart-sm" title="{{ t.book_add_to_cart }}">
+                                            <i class="bi bi-bag-plus"></i>
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <button class="btn-cart-sm" disabled title="{{ t.book_sold_out }}">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </article>

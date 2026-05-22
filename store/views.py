@@ -3,10 +3,11 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 from httpx import request
 from django.db.models import Q
 from django.core.paginator import Paginator
-from .models import Book, Category
+from .models import Book, Category, Wishlist
 
 
 def _get_cart(request):
@@ -129,3 +130,76 @@ def decrease_quantity(request, book_id):
             _save_cart(request, cart)
             messages.success(request, 'Mahsulot savatdan o\'chirildi.')
     return redirect('cart_detail')
+
+
+# Wishlist views
+@login_required
+def wishlist_view(request):
+    """Display user's wishlist"""
+    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+    books = wishlist.books.all()
+    
+    return render(request, 'wishlist.html', {
+        'books': books,
+        'wishlist': wishlist
+    })
+
+
+@login_required
+@require_POST
+def add_to_wishlist(request, book_id):
+    """Add book to wishlist"""
+    book = get_object_or_404(Book, id=book_id, is_active=True)
+    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+    
+    if book not in wishlist.books.all():
+        wishlist.books.add(book)
+        message = f'"{book.title}" sevimlilar ro\'yxatiga qo\'shildi.'
+    else:
+        message = f'"{book.title}" allaqachon sevimlilar ro\'yxatida.'
+    
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': True,
+            'message': message,
+            'is_in_wishlist': True
+        })
+    
+    messages.success(request, message)
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+
+@login_required
+@require_POST
+def remove_from_wishlist(request, book_id):
+    """Remove book from wishlist"""
+    book = get_object_or_404(Book, id=book_id, is_active=True)
+    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+    
+    if book in wishlist.books.all():
+        wishlist.books.remove(book)
+        message = f'"{book.title}" sevimlilar ro\'yxatidan o\'chirildi.'
+    else:
+        message = f'"{book.title}" sevimlilar ro\'yxatida mavjud emas.'
+    
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': True,
+            'message': message,
+            'is_in_wishlist': False
+        })
+    
+    messages.success(request, message)
+    return redirect(request.META.get('HTTP_REFERER', 'wishlist_view'))
+
+
+@login_required
+def is_in_wishlist(request, book_id):
+    """Check if book is in user's wishlist (AJAX)"""
+    book = get_object_or_404(Book, id=book_id)
+    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+    is_wishlisted = book in wishlist.books.all()
+    
+    return JsonResponse({
+        'is_in_wishlist': is_wishlisted
+    })

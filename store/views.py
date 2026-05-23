@@ -1,10 +1,8 @@
-import django
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from httpx import request
 from django.db.models import Q
 from django.core.paginator import Paginator
 from .models import Book, Category, Wishlist
@@ -67,23 +65,26 @@ def cart_detail(request):
     return render(request, 'cart.html', {'items': items, 'total': total})
 
 
+@require_POST
 def add_to_cart(request, book_id):
     book = get_object_or_404(Book, id=book_id, is_active=True)
     cart = _get_cart(request)
-    current = cart.get(str(book.id), 0) + 1
-    _save_cart(request, cart)
-    if current +1 >book.stock:
+    current_quantity = cart.get(str(book.id), 0)
+
+    if current_quantity + 1 > book.stock:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'success': False, 'error': 'Omborda yetarli emas'})
         messages.warning(request, f'"{book.title}" omborda yetarli emas.')
         return redirect('cart_detail')
-    cart[str(book.id)] = current + 1
+
+    cart[str(book.id)] = current_quantity + 1
     _save_cart(request, cart)
+
     try:
         total_count = sum(int(v) for v in cart.values())
     except Exception:
         total_count = len(cart)
-    # If called via AJAX, return JSON so frontend can update without redirect
+
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'success': True, 'cart_count': total_count, 'book_title': book.title})
 
@@ -140,7 +141,7 @@ def wishlist_view(request):
     books = wishlist.books.all()
     
     return render(request, 'wishlist.html', {
-        'books': books,
+        'wishlist_items': books,
         'wishlist': wishlist
     })
 
@@ -168,6 +169,33 @@ def add_to_wishlist(request, book_id):
     messages.success(request, message)
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
+
+@login_required
+@require_POST
+def toggle_wishlist(request, book_id):
+    """Kitobni sevimlilarga qo'shish yoki olib tashlash (Toggle)"""
+    book = get_object_or_404(Book, id=book_id)
+    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+    
+    if book in wishlist.books.all():
+        wishlist.books.remove(book)
+        added = False
+        message = f'"{book.title}" sevimlilar ro\'yxatidan olib tashlandi.'
+    else:
+        wishlist.books.add(book)
+        added = True
+        message = f'"{book.title}" sevimlilar ro\'yxatiga qo\'shildi.'
+        
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': True,
+            'added': added,
+            'message': message,
+            'wishlist_count': wishlist.books.count()
+        })
+    
+    messages.success(request, message)
+    return redirect(request.META.get('HTTP_REFERER', 'wishlist_view'))
 
 @login_required
 @require_POST

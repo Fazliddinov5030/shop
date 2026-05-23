@@ -1,39 +1,44 @@
 {% extends 'base.html' %}
-{% block content %}
-<div class="order-history-page">
-    <div class="order-history-header mb-5">
-        <div class="order-history-icon mb-3">
-            <i class="bi bi-clock-history"></i>
-        </div>
-        <h1>{{ t.order_history_title }}</h1>
-        <p class="text-muted">{{ t.order_history_subtitle }}</p>
-    </div>
+{% load static %}
 
-    {% if orders %}
-        <div class="order-history-card card">
-            <ul class="order-list list-unstyled mb-0">
-                {% for order in orders %}
-                    <li class="order-item">
-                        <div>
-                            <a href="{% url 'order_detail' order.id %}">{{ t.order_history_title }} #{{ order.id }}</a>
-                            <div class="order-item-date">{{ order.created_at|date:'Y-m-d H:i' }}</div>
-                        </div>
-                        <div class="order-item-meta">
-                            <span class="order-item-status">{{ t.order_status }}: {{ order.get_status_display }}</span>
-                            <span class="order-item-total">{{ t.order_total_text }}: {{ order.total_price }} UZS</span>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% else %}
-        <div class="empty-state order-empty-state">
-            <div class="order-history-icon mb-3">
-                <i class="bi bi-bag-x"></i>
-            </div>
-            <h2>{{ t.order_none }}</h2>
-            <p class="text-muted">{{ t.order_history_empty_text }}</p>
-        </div>
-    {% endif %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/orders.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-hero text-center">
+    <div class="hero-icon">
+        <i class="bi bi-clock-history"></i>
+    </div>
+    <h1 class="hero-title">{{ t.order_history_title }}</h1>
+    <p class="hero-subtitle">{{ t.order_history_subtitle }}</p>
 </div>
+
+{% if orders %}
+    <div class="orders-list container">
+        {% for order in orders %}
+            <article class="order-card">
+                <div class="order-card-left">
+                    <h3 class="order-id"><a href="{% url 'order_detail' order.id %}">{{ t.order_history_title }} #{{ order.id }}</a></h3>
+                    <div class="order-date">{{ order.created_at|date:'Y-m-d H:i' }}</div>
+                </div>
+                <div class="order-card-right">
+                    <div class="order-status">{{ t.order_status }}: {{ order.get_status_display }}</div>
+                    <div class="order-total">{{ t.order_total_text }}: <strong>{{ order.total_price }} UZS</strong></div>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <section class="empty-state order-empty-state">
+        <div class="empty-card">
+            <div class="empty-icon"><i class="bi bi-bag-x"></i></div>
+            <h2 class="empty-title">{{ t.order_none }}</h2>
+            <p class="empty-text">{{ t.order_history_empty_text }}</p>
+            <a class="continue-btn" href="{% url 'home' %}">{{ t.order_back_to_shop|default:'Kitoblarni ko\'rish' }}</a>
+        </div>
+    </section>
+{% endif %}
+
 {% endblock %}

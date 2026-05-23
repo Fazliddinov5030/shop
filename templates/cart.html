@@ -43,15 +43,19 @@
                         </td>
                         <td data-label="{{ t.cart_quantity }}">
                             <div class="qty-controls">
-                                <a href="{% url 'decrease_quantity' item.book.id %}" class="qty-btn qty-minus"
-                                    title="Kamaytirilish">
-                                    <i class="bi bi-dash"></i>
-                                </a>
+                                <form method="post" action="{% url 'decrease_quantity' item.book.id %}" class="qty-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="qty-btn qty-minus" title="Kamaytirilish">
+                                        <i class="bi bi-dash"></i>
+                                    </button>
+                                </form>
                                 <span class="qty-value">{{ item.quantity }}</span>
-                                <a href="{% url 'increase_quantity' item.book.id %}" class="qty-btn qty-plus"
-                                    title="Ko'paytirilish">
-                                    <i class="bi bi-plus"></i>
-                                </a>
+                                <form method="post" action="{% url 'increase_quantity' item.book.id %}" class="qty-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="qty-btn qty-plus" title="Ko'paytirilish">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                         <td data-label="{{ t.cart_price }}">

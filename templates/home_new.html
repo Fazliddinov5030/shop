@@ -195,9 +195,15 @@
                             <button class="book-card-btn book-card-btn-primary" onclick="addToCart('{{ book.id }}')">
                                 <i class="bi bi-bag-plus"></i> Add to Cart
                             </button>
-                            <button class="book-card-btn book-card-wishlist" title="Add to Wishlist">
-                                <i class="bi bi-heart"></i>
-                            </button>
+                            {% if user.is_authenticated %}
+                                <button class="book-card-btn book-card-wishlist wishlist-btn" data-book-id="{{ book.id }}" title="Sevimlilar ro'yxatiga qo'shish">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                            {% else %}
+                                <a href="{% url 'login' %}" class="book-card-btn book-card-wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

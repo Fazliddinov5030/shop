@@ -39,6 +39,7 @@
                         <a data-nav-index="0" class="btn btn-ghost btn-sm d-flex align-items-center {% if current == 'home' %}active-nav{% endif %}" href="{% url 'home' %}"><i class="bi bi-house"></i><span class="nav-text d-none d-md-inline ms-2">{{ t.nav_home }}</span></a>
                         <a data-nav-index="1" class="btn btn-outline btn-sm position-relative d-flex align-items-center {% if current == 'cart_detail' %}active-nav-outline{% endif %}" href="{% url 'cart_detail' %}"><i class="bi bi-cart"></i><span class="nav-text d-none d-md-inline ms-2">{{ t.nav_cart }}</span><span class="cart-badge">{{ cart_count }}</span></a>
                         {% if user.is_authenticated %}
+                            <a data-nav-index="1.5" class="btn btn-outline btn-sm position-relative d-flex align-items-center nav-link-wishlist {% if current == 'wishlist_view' %}active-nav-outline{% endif %}" href="{% url 'wishlist_view' %}"><i class="bi bi-heart"></i><span class="nav-text d-none d-md-inline ms-2">{{ t.nav_wishlist }}</span><span class="wishlist-badge">{{ wishlist_count }}</span></a>
                             <a data-nav-index="2" class="btn btn-outline btn-sm d-flex align-items-center {% if current == 'order_history' %}active-nav-outline{% endif %}" href="{% url 'order_history' %}"><i class="bi bi-clock-history"></i><span class="nav-text d-none d-md-inline ms-2">{{ t.nav_orders }}</span></a>
                             <a data-nav-index="2" class="btn btn-outline btn-sm d-flex align-items-center {% if current == 'profile' %}active-nav-outline{% endif %}" href="{% url 'profile' %}"><i class="bi bi-person-circle"></i><span class="nav-text d-none d-md-inline ms-2">Profil</span></a>
                             <form method="post" action="{% url 'logout' %}" class="d-inline">
@@ -171,5 +172,6 @@
         });
     })();
     </script>
+    <script src="{% static 'js/wishlist.js' %}"></script>
 </body>
 </html>

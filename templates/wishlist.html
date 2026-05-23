@@ -1,0 +1,77 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/wishlist.css' %}">
+{% endblock %}
+
+{% block title %}Sevimlilar - BookHub{% endblock %}
+
+{% block content %}
+
+<div class="page-hero text-center">
+    <div class="hero-icon">
+        <i class="bi bi-heart"></i>
+    </div>
+    <h1 class="hero-title">Sevimlilar</h1>
+    <p class="hero-subtitle">Yoqgan kitoblaringiz shu yerda. Minimal va toza dizayn.</p>
+    <div class="page-actions">
+        <a href="{% url 'home' %}" class="primary-btn"><i class="bi bi-arrow-left-short"></i><span>Kitoblar sahifasiga qaytish</span></a>
+    </div>
+</div>
+
+<section class="wishlist-page">
+
+    {% if wishlist_items %}
+        <div class="wishlist-grid">
+            {% for book in wishlist_items %}
+                <article class="wishlist-card">
+                    <div class="wishlist-card-cover">
+                        {% if book.cover %}
+                            <img src="{{ book.cover.url }}" alt="{{ book.title }}">
+                        {% else %}
+                            <div class="wishlist-cover-placeholder">
+                                <i class="bi bi-book"></i>
+                            </div>
+                        {% endif %}
+                        <form action="{% url 'toggle_wishlist' book.id %}" method="post" class="wishlist-remove">
+                            {% csrf_token %}
+                            <button type="submit" aria-label="Sevimlilardan o'chirish">
+                                <i class="bi bi-heart-fill"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="wishlist-card-body">
+                        <a href="{% url 'book_detail' book.slug %}" class="wishlist-book-title">{{ book.title }}</a>
+                        <p class="wishlist-book-author">{{ book.author }}</p>
+                        <div class="wishlist-footer">
+                            <span class="wishlist-price">{{ book.price }} UZS</span>
+                            {% if book.stock > 0 %}
+                                <form action="{% url 'add_to_cart' book.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="wishlist-add">Savatga qo'shish</button>
+                                </form>
+                            {% else %}
+                                <span class="wishlist-stock">Nolmavjud</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+
+        
+
+    {% else %}
+        <section class="wishlist-empty-state">
+            <div class="wishlist-empty-card">
+                <div class="wishlist-empty-icon"><i class="bi bi-heart"></i></div>
+                <h2>Sevimlilar ro'yxati bo'sh</h2>
+                <p>Hozircha hech qanday kitob saqlanmagan. Kitoblarni tekshiring va yoqtirganlarni sevimlilarga qo'shing.</p>
+                <a href="{% url 'home' %}" class="primary-btn">Kitoblarni ko'rib chiqish</a>
+            </div>
+        </section>
+    {% endif %}
+</section>
+
+{% endblock %}

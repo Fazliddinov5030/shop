@@ -1,3 +1,5 @@
+from store.models import Wishlist
+
 
 def language_context(request):
     supported = {
@@ -8,6 +10,7 @@ def language_context(request):
             'nav_home': 'Bosh sahifa',
             'nav_cart': 'Savat',
             'nav_orders': 'Buyurtmalar',
+            'nav_wishlist': 'Sevimlilar',
             'nav_logout': 'Chiqish',
             'nav_login': 'Kirish',
             'nav_register': "Ro'yxatdan o'tish",
@@ -83,6 +86,7 @@ def language_context(request):
             'nav_home': 'Главная',
             'nav_cart': 'Корзина',
             'nav_orders': 'Заказы',
+            'nav_wishlist': 'Избранное',
             'nav_logout': 'Выйти',
             'nav_login': 'Войти',
             'nav_register': 'Регистрация',
@@ -158,6 +162,7 @@ def language_context(request):
             'nav_home': 'Home',
             'nav_cart': 'Cart',
             'nav_orders': 'Orders',
+            'nav_wishlist': 'Wishlist',
             'nav_logout': 'Logout',
             'nav_login': 'Login',
             'nav_register': 'Register',
@@ -243,3 +248,9 @@ def cart_count(request):
     except (ValueError, TypeError):
         count = 0
     return {'cart_count': count}
+
+def wishlist_count(request):
+    if request.user.is_authenticated:
+        wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+        return {'wishlist_count': wishlist.books.count()}
+    return {'wishlist_count': 0}

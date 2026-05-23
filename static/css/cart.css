@@ -102,6 +102,10 @@
     width: fit-content;
 }
 
+.qty-form {
+    display: inline-flex;
+}
+
 .qty-btn {
     width: 32px;
     height: 32px;

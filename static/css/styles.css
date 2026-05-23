@@ -132,7 +132,18 @@ main { flex: 1; padding: 2.25rem 1rem; }
 }
 
 /* Cart badge */
-.cart-badge { position: absolute; right: -6px; top: -6px; background: #ef4444; color: #fff; font-size: .65rem; padding: 2px 6px; border-radius: 999px; border: 2px solid var(--surface); }
+.cart-badge,
+.wishlist-badge { position: absolute; right: -6px; top: -6px; background: #6366f1; color: #fff; font-size: .65rem; padding: 2px 6px; border-radius: 999px; border: 2px solid var(--surface); }
+
+/* Wishlist Nav Button Styles */
+.nav-link-wishlist {
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.nav-link-wishlist:hover {
+    color: #dc3545 !important;
+    transform: scale(1.1);
+}
 
 /* Centered compact form card */
 .form-card-centered { max-width: 420px; margin: 0 auto; padding: .9rem; }
@@ -211,8 +222,8 @@ p { color: var(--muted); margin: 0 0 1rem 0; }
 }
 .book-card:hover {
     transform: translateY(-12px);
-    box-shadow: 0 20px 40px rgba(255, 23, 68, 0.15);
-    border-color: #ff1744;
+    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+    border-color: #6366f1;
 }
 
 /* Status badge at the top */
@@ -230,7 +241,7 @@ p { color: var(--muted); margin: 0 0 1rem 0; }
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 .status-in-stock { background: #10b981; color: white; }
-.status-out-of-stock { background: #ef4444; color: white; }
+.status-out-of-stock { background: #6366f1; color: white; }
 
 .book-card img { width: 100%; height: 200px; object-fit: contain; background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%); padding: 15px; transition: transform 0.5s ease; }
 .book-card:hover img { transform: scale(1.1); }
@@ -253,7 +264,7 @@ p { color: var(--muted); margin: 0 0 1rem 0; }
 }
 .price { 
     font-weight: 800; 
-    color: #ff1744; 
+    color: #6366f1; 
     font-size: 0.95rem;
     flex: 1;
 }
@@ -290,37 +301,72 @@ p { color: var(--muted); margin: 0 0 1rem 0; }
 .btn-cart-sm i { font-size: 1.1rem; }
 
 /* Wishlist Button Styling */
-.btn-wishlist {
+.btn-wishlist,
+.wishlist-btn {
     width: 36px;
     height: 36px;
-    border-radius: 8px;
-    background: #f1f5f9;
+    border-radius: 12px;
+    background: #f8fafc;
     color: #475569;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid #e5e7eb;
+    transition: all 0.25s ease;
     padding: 0;
     cursor: pointer;
     flex-shrink: 0;
-    font-size: 1.1rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    font-size: 1.05rem;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
 }
 
-.btn-wishlist:hover { 
-    background: #ff1744;
-    color: white; 
-    transform: scale(1.15);
-    box-shadow: 0 4px 12px rgba(255, 23, 68, 0.3);
-}
-
-.btn-wishlist.active {
-    background: linear-gradient(135deg, #ff1744 0%, #ff5577 100%);
+.btn-wishlist:hover,
+.wishlist-btn:hover {
+    background: #6366f1;
     color: white;
-    box-shadow: 0 4px 12px rgba(255, 23, 68, 0.3);
+    transform: scale(1.08);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.25);
 }
 
+.btn-wishlist.active,
+.wishlist-btn.active {
+    background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 10px 28px rgba(99, 102, 241, 0.28);
+}
+
+.book-card-wishlist {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #475569;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e5e7eb;
+    transition: all 0.25s ease;
+    padding: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 1.05rem;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.book-card-wishlist:hover {
+    background: #6366f1;
+    color: white;
+    transform: scale(1.08);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.25);
+}
+
+.book-card-wishlist.active {
+    background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 10px 28px rgba(99, 102, 241, 0.28);
+}
 
 .sidebar { position: sticky; top: 1rem; align-self: start; }
 .sidebar-card { 
@@ -953,7 +999,7 @@ a:hover {
 /* Field error */
 .field-error {
     font-size: 12px;
-    color: #ef4444;
+    color: #6366f1;
     margin-top: 4px;
     padding-left: 4px;
 }

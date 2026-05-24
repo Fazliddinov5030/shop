@@ -779,6 +779,169 @@ a:hover { color: var(--primary-600); text-decoration: underline; }
     }
 }
 
+.checkout-page {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.checkout-header h1 {
+    margin-bottom: 0.4rem;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+}
+
+.checkout-subtitle {
+    margin: 0;
+    color: #64748b;
+    font-size: 1rem;
+    max-width: 680px;
+}
+
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1.8fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.checkout-table-card,
+.checkout-summary-card {
+    background: #ffffff;
+    border: 1px solid #eef2ff;
+    border-radius: 28px;
+    box-shadow: 0 18px 48px rgba(99, 102, 241, 0.08);
+}
+
+.checkout-table-card {
+    padding: 1.5rem;
+}
+
+.checkout-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.checkout-table-header h2 {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.checkout-count {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+.checkout-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 100%;
+}
+
+.checkout-table thead {
+    background: #f8fafc;
+}
+
+.checkout-table th,
+.checkout-table td {
+    padding: 1rem 1.15rem;
+    text-align: left;
+    border-bottom: 1px solid #eff6ff;
+    color: #334155;
+}
+
+.checkout-table th {
+    color: #0f172a;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.checkout-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.checkout-book-name {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.checkout-summary-card {
+    padding: 2rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.summary-card-body {
+    width: 100%;
+}
+
+.summary-card-body h2 {
+    margin-top: 0;
+    font-size: 1.4rem;
+    color: #0f172a;
+}
+
+.summary-note {
+    color: #64748b;
+    margin: 0.75rem 0 1.5rem;
+    line-height: 1.75;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1rem 1.2rem;
+    background: #f8fafc;
+    border-radius: 18px;
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.checkout-action-btn {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 1.15rem;
+    border-radius: 14px;
+    background: #6366f1;
+    border: 1px solid transparent;
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.checkout-action-btn:hover {
+    background: #4f46e5;
+    box-shadow: 0 12px 24px rgba(99, 102, 241, 0.18);
+}
+
+.checkout-empty-card {
+    background: #ffffff;
+    border: 1px solid #eef2ff;
+    border-radius: 24px;
+    padding: 2rem;
+    text-align: center;
+    color: #64748b;
+}
+
+@media (max-width: 992px) {
+    .checkout-grid {
+        grid-template-columns: 1fr;
+    }
+    .checkout-summary-card {
+        padding: 1.5rem;
+    }
+    .checkout-table-card {
+        padding: 1.25rem;
+    }
+}
+
 /* Print */
 @media print { .no-print { display:none; } }
 /* Table Customization */

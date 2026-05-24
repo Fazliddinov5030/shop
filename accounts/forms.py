@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm, PasswordResetForm
 
 from .models import CustomUser
 
@@ -42,6 +42,18 @@ class UserProfileForm(forms.ModelForm):
             'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'avatar': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
         }
+
+
+class CustomPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(
+        label='Email manzili',
+        max_length=254,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': ' ',
+            'autocomplete': 'email'
+        })
+    )
 
 
 class CustomPasswordChangeForm(PasswordChangeForm):

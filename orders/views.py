@@ -3,6 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import F
 from django.shortcuts import get_object_or_404, redirect, render
+from django.core.mail import BadHeaderError, send_mail
+from django.template.loader import render_to_string
+from django.conf import settings
 
 from store.models import Book
 from .models import Order, OrderItem
@@ -44,6 +47,34 @@ def checkout(request):
             )
             # F() — atomik minus, race condition yo'q
             Book.objects.filter(id=book.id).update(stock=F('stock') - quantity)
+
+
+        email_items = [
+            {'book': books_dict[book_id], 'quantity': quantity, 'price': books_dict[book_id].price}
+            for book_id, quantity in cart.items()
+        ]
+        subject = f'BookHub — Buyurtma #{order.id} qabul qilindi'
+        message = render_to_string('email_confirmation.html', {
+            'order': order,
+            'items': email_items,
+        })
+
+        from_email = settings.DEFAULT_FROM_EMAIL or settings.EMAIL_HOST_USER or 'no-reply@bookhub.uz'
+        if request.user.email:
+            try:
+                send_mail(
+                    subject,
+                    message,
+                    from_email,
+                    [request.user.email],
+                    fail_silently=False,
+                )
+            except BadHeaderError:
+                messages.warning(request, 'Email sarlavhasida xatolik bor. Iltimos keyinroq tekshiring.')
+            except Exception:
+                messages.warning(request, 'Email yuborishda xatolik yuz berdi. Buyurtma qabul qilindi, lekin email tasdiqi yuborilmadi.')
+        else:
+            messages.warning(request, 'Sizning profildagi email manzilingiz mavjud emas. Email tasdiqlash yuborilmadi.')
 
         request.session['cart'] = {}
         messages.success(request, 'Buyurtmangiz qabul qilindi. Rahmat!')

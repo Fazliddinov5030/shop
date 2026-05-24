@@ -1,0 +1,12 @@
+Hurmatli {{ order.user.first_name }},
+
+Buyurtmangiz qabul qilindi!
+Buyurtma raqami: #{{ order.id }}
+
+Kitoblar:
+{% for item in items %}
+- {{ item.book.title }} x{{ item.quantity }} — {{ item.price }} UZS
+{% endfor %}
+
+Rahmat!
+BookHub

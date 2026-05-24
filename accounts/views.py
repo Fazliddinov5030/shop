@@ -5,7 +5,7 @@ from django.contrib.auth.views import PasswordChangeView, PasswordResetView, Pas
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 
-from .forms import CustomUserCreationForm, UserProfileForm, CustomPasswordChangeForm
+from .forms import CustomUserCreationForm, UserProfileForm, CustomPasswordChangeForm, CustomPasswordResetForm
 
 
 def register(request):
@@ -95,6 +95,7 @@ def password_change_done(request):
 
 
 class CustomPasswordResetView(PasswordResetView):
+    form_class = CustomPasswordResetForm
     template_name = 'accounts/password_reset.html'
     email_template_name = 'accounts/password_reset_email.html'
     subject_template_name = 'accounts/password_reset_subject.txt'

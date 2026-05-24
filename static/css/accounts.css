@@ -437,6 +437,20 @@ textarea.form-control {
     gap: 1.5rem;
 }
 
+.auth-form .field-label {
+    position: static;
+    transform: none;
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.auth-form .auth-field-group {
+    position: static;
+}
+
 .btn-lg {
     padding: 0.9rem 1.5rem;
     font-size: 1rem;

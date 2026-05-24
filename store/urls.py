@@ -28,4 +28,5 @@ urlpatterns = [
     path('wishlist/check/<int:book_id>/', views.is_in_wishlist, name='is_in_wishlist'),
     
     path('api/', include(router.urls)),
+   path('book/<int:book_id>/review/', views.add_review, name='add_review'),
 ]

@@ -52,3 +52,19 @@ class Wishlist(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Wishlist"
+
+
+class Review(models.Model):
+    book = models.ForeignKey(Book, related_name='reviews', on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, related_name='reviews', on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField()
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('book', 'user')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Review of {self.book.title} by {self.user.username}"

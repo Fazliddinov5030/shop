@@ -3,9 +3,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Avg, Q
 from django.core.paginator import Paginator
-from .models import Book, Category, Wishlist
+from .models import Book, Category, Wishlist, Review
 
 
 def _get_cart(request):
@@ -41,7 +41,21 @@ def home(request):
 
 def book_detail(request, slug):
     book = get_object_or_404(Book, slug=slug, is_active=True)
-    return render(request, 'book_detail.html', {'book': book})
+    reviews = book.reviews.all()
+    average_rating = reviews.aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0
+    if average_rating:
+        average_rating = round(average_rating, 1)
+
+    user_review = False
+    if request.user.is_authenticated:
+        user_review = Review.objects.filter(book=book, user=request.user).exists()
+
+    return render(request, 'book_detail.html', {
+        'book': book,
+        'reviews': reviews,
+        'user_review': user_review,
+        'average_rating': average_rating,
+    })
 
 
 def cart_detail(request):
@@ -231,3 +245,20 @@ def is_in_wishlist(request, book_id):
     return JsonResponse({
         'is_in_wishlist': is_wishlisted
     })
+
+
+@login_required
+@require_POST
+def add_review(request, book_id):
+    book = get_object_or_404(Book, id=book_id, is_active=True)
+    rating = int(request.POST.get('rating', 0))
+    comment = request.POST.get('comment', '').strip()
+
+    if Review.objects.filter(book=book, user=request.user).exists():
+        messages.warning(request, 'Siz bu kitobga allaqachon sharh qoldirgansiz.')
+        return redirect(book.get_absolute_url())
+    
+    Review.objects.create(book=book, user=request.user, rating=rating, comment=comment)
+    messages.success(request, 'Sharhingiz uchun rahmat!')
+    return redirect(book.get_absolute_url())
+

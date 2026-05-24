@@ -10,76 +10,74 @@
     </ol>
 </nav>
 
-<div class="row g-4">
-    <div class="col-md-5">
-        {% if book.cover %}
-            <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="img-fluid rounded shadow-sm">
-        {% else %}
-            <div class="bg-light d-flex align-items-center justify-content-center rounded shadow-sm" style="height: 400px;">
-                <i class="bi bi-book" style="font-size: 5rem; color: #ccc;"></i>
+<section class="book-detail-card">
+    <div class="row g-4 align-items-start">
+        <div class="col-lg-5">
+            <div class="book-detail-cover">
+                {% if book.cover %}
+                    <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="img-fluid">
+                {% else %}
+                    <div class="cover-placeholder">
+                        <i class="bi bi-book"></i>
+                    </div>
+                {% endif %}
             </div>
-        {% endif %}
-    </div>
-
-    <div class="col-md-7">
-        <h1 class="mb-3">{{ book.title }}</h1>
-        
-        <div class="mb-3">
-            <p class="text-muted mb-1">{{ t.book_author }}</p>
-            <p class="fs-5">{{ book.author }}</p>
         </div>
+        <div class="col-lg-7">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                <a href="?category={{ book.category.slug }}" class="badge badge-pill category-pill">{{ book.category.name }}</a>
+                {% if book.stock > 0 %}
+                    <span class="badge badge-pill stock-pill stock-in">{{ t.book_in_stock }} ({{ book.stock }} ta)</span>
+                {% else %}
+                    <span class="badge badge-pill stock-pill stock-out">{{ t.book_out_of_stock }}</span>
+                {% endif %}
+            </div>
 
-        <div class="mb-3">
-            <p class="text-muted mb-1">{{ t.book_section }}</p>
-            <p class="fs-5">
-                <a href="?category={{ book.category.slug }}" class="badge bg-info">{{ book.category.name }}</a>
-            </p>
-        </div>
+            <h1 class="book-detail-title">{{ book.title }}</h1>
+            <p class="book-author mb-4">{{ t.book_author }}: <span>{{ book.author }}</span></p>
 
-        <div class="mb-4">
-            <p class="text-muted mb-1">{{ t.book_price }}</p>
-            <p class="display-4 text-success fw-bold">{{ book.price }} UZS</p>
-        </div>
+            <div class="row g-3 mb-4">
+                <div class="col-sm-6">
+                    <div class="info-card">
+                        <span class="info-label">{{ t.book_price }}</span>
+                        <p class="info-value">{{ book.price }} UZS</p>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="info-card">
+                        <span class="info-label">Reyting</span>
+                        <p class="info-value">{% if reviews.count %}{{ average_rating }} ⭐{% else %}Hali yo'q{% endif %}</p>
+                    </div>
+                </div>
+            </div>
 
-        <div class="mb-4">
-            <p class="text-muted mb-1">{{ t.book_stock }}</p>
-            {% if book.stock > 0 %}
-                <span class="badge bg-success fs-6">{{ t.book_in_stock }} ({{ book.stock }} ta)</span>
-            {% else %}
-                <span class="badge bg-danger fs-6">{{ t.book_out_of_stock }}</span>
-            {% endif %}
-        </div>
+            <div class="book-description mb-4">
+                <p class="description-label">{{ t.book_description }}</p>
+                <p class="description-text">{{ book.description|linebreaks }}</p>
+            </div>
 
-        <div class="mb-4">
-            <p class="text-muted mb-1">{{ t.book_description }}</p>
-            <p class="lead">{{ book.description|linebreaks }}</p>
-        </div>
-
-        {% if book.stock > 0 %}
-            <div class="mb-3 d-flex gap-2">
-                <form action="{% url 'add_to_cart' book.id %}" method="post" class="flex-grow-1 ajax-add-form">
+            <div class="book-detail-actions">
+                <form action="{% url 'add_to_cart' book.id %}" method="post" class="ajax-add-form">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary btn-lg w-100">
-                        <i class="bi bi-cart-plus"></i> {{ t.book_add_to_cart }}
+                        <i class="bi bi-cart-plus me-2"></i> {{ t.book_add_to_cart }}
                     </button>
                 </form>
                 {% if user.is_authenticated %}
-                    <button class="btn btn-outline-danger btn-lg wishlist-btn" data-book-id="{{ book.id }}" title="Sevimlilar ro'yxatiga qo'shish">
+                    <button class="btn-wishlist wishlist-btn" data-book-id="{{ book.id }}" title="Sevimlilar ro'yxatiga qo'shish">
                         <i class="bi bi-heart"></i>
                     </button>
                 {% endif %}
             </div>
-        {% else %}
-            <button class="btn btn-secondary btn-lg w-100" disabled>
-                {{ t.book_sold_out }}
-            </button>
-        {% endif %}
 
-        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg w-100">
-            <i class="bi bi-arrow-left"></i> {{ t.book_back }}
-        </a>
+            <div class="mt-4">
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg w-100">
+                    <i class="bi bi-arrow-left me-2"></i> {{ t.book_back }}
+                </a>
+            </div>
+        </div>
     </div>
-</div>
+</section>
 
 <div class="row mt-5">
     <div class="col-12">
@@ -88,7 +86,7 @@
             {% for related_book in book.category.books.all|dictsort:"title" %}
                 {% if related_book.id != book.id %}
                     <div class="col-md-6 col-lg-3">
-                        <div class="card h-100 shadow-sm">
+                        <div class="card related-book-card h-100 shadow-sm">
                             {% if related_book.cover %}
                                 <img src="{{ related_book.cover.url }}" alt="{{ related_book.title }}" class="card-img-top" style="height: 150px; object-fit: cover;">
                             {% else %}
@@ -110,4 +108,59 @@
         </div>
     </div>
 </div>
+
+<section class="reviews-section mt-5">
+    <div class="section-head">
+        <h3>Sharhlar ({{ reviews.count }})</h3>
+        {% if reviews.count %}
+            <span class="review-summary">O'rtacha reyting: <strong>{{ average_rating }} ⭐</strong></span>
+        {% endif %}
+    </div>
+
+    {% if reviews.count %}
+        <div class="review-grid">
+            {% for review in reviews %}
+            <article class="review-card">
+                <div class="review-card-meta">
+                    <div class="review-author">
+                        <span class="review-avatar">{{ review.user.username|slice:":1"|upper }}</span>
+                        <strong>{{ review.user.username }}</strong>
+                    </div>
+                    <span class="review-score">{{ review.rating }} ⭐</span>
+                </div>
+                <p>{{ review.comment }}</p>
+                <small>{{ review.created_at|date:"d.m.Y" }}</small>
+            </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">Hali sharh yo'q.</div>
+    {% endif %}
+</section>
+
+{% if user.is_authenticated and not user_review %}
+    <section class="review-form-card mt-4">
+        <h3>Sharh qo'shish</h3>
+        <form action="{% url 'add_review' book.id %}" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="rating" class="form-label">Reyting</label>
+                <select class="form-control" id="rating" name="rating" required>
+                    <option value="5">5 ⭐</option>
+                    <option value="4">4 ⭐</option>
+                    <option value="3">3 ⭐</option>
+                    <option value="2">2 ⭐</option>
+                    <option value="1">1 ⭐</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="comment" class="form-label">Sharh</label>
+                <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Sharh qo'shish</button>
+        </form>
+    </section>
+{% elif user_review %}
+    <div class="note-box mt-4">Siz allaqachon yozgansiz.</div>
+{% endif %}
 {% endblock %}
